@@ -1,4 +1,4 @@
-version: '6.1.2-1-{build}'
+version: '1.0.{build}'
 
 branches:
   only:
@@ -6,7 +6,7 @@ branches:
 
 skip_non_tags: true
 
-image: Visual Studio 2017
+image: Visual Studio 2019
 
 configuration:
   - Release
@@ -14,10 +14,12 @@ configuration:
 
 environment:
   matrix:
-    - CMAKE_GENERATOR_NAME: Visual Studio 15 2017
-      TOOLSET: msvc2017-x86
-    - CMAKE_GENERATOR_NAME: Visual Studio 15 2017 Win64
-      TOOLSET: msvc2017-x64
+    - TOOLSET: msvc2019-x86
+      GENERATOR: Visual Studio 16 2019
+      PLATFORM: Win32
+    - TOOLSET: msvc2019-x64
+      GENERATOR: Visual Studio 16 2019
+      PLATFORM: x64
 
 matrix:
   fast_finish: true
@@ -25,7 +27,7 @@ matrix:
 before_build:
   - cmd: mkdir build
   - cmd: cd build
-  - cmd: cmake -G "%CMAKE_GENERATOR_NAME%" -DCMAKE_INSTALL_PREFIX:PATH=../gmp-%APPVEYOR_REPO_TAG_NAME%-%TOOLSET%-%CONFIGURATION% ..
+  - cmd: cmake -G "%GENERATOR%" -A %PLATFORM% -DCMAKE_INSTALL_PREFIX:PATH=%APPVEYOR_BUILD_FOLDER%/gmp-%APPVEYOR_REPO_TAG_NAME%-%TOOLSET%-%CONFIGURATION% ..
 
 build_script:
   - cmd: cmake --build . --config %CONFIGURATION%
